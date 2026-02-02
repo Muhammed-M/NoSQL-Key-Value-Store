@@ -1,0 +1,7 @@
+# No external dependencies required for basic functionality
+# Python standard library only
+
+# Optional dependencies for advanced features:
+# numpy>=1.21.0  # For word embeddings (if using numpy)
+# sentence-transformers>=2.0.0  # For word embeddings
+
