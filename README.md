@@ -15,18 +15,47 @@ A distributed key-value store built in Python with support for replication, inde
 - **ACID Properties**: Atomic operations, durability guarantees
 - **Benchmarks**: Write throughput and durability tests
 
+## Project Structure
+
+```
+.
+├── src/                    # Source code
+│   ├── kv_store.py         # Core key-value store with WAL
+│   ├── server.py           # Single-node HTTP server
+│   ├── client.py           # Client library
+│   ├── replication.py      # Primary-secondary replication
+│   ├── replicated_server.py # Server with primary-secondary
+│   ├── masterless_replication.py # Master-less replication
+│   ├── masterless_server.py # Server with master-less
+│   └── indexes.py          # Full-text and embedding indexes
+├── tests/                  # Test files
+│   ├── tests.py            # Basic tests
+│   └── test_replication.py # Replication tests
+├── benchmarks/             # Benchmark files
+│   └── benchmarks.py       # Performance benchmarks
+├── scripts/                # Helper scripts
+│   └── run_cluster.py      # Cluster runner
+├── docs/                   # Documentation
+│   ├── GITHUB_SETUP.md     # GitHub setup guide
+│   └── QUICKSTART.md       # Quick start guide
+├── run_server.py           # Entry point for single server
+├── run_tests.py            # Entry point for tests
+├── run_benchmarks.py       # Entry point for benchmarks
+└── README.md               # This file
+```
+
 ## Architecture
 
 ### Core Components
 
-1. **kv_store.py**: Core key-value store with WAL-based persistence
-2. **server.py**: HTTP server for single-node operation
-3. **client.py**: Client library for interacting with the store
-4. **replication.py**: Primary-secondary replication logic
-5. **replicated_server.py**: HTTP server with primary-secondary replication
-6. **masterless_replication.py**: Master-less replication with vector clocks
-7. **masterless_server.py**: HTTP server with master-less replication
-8. **indexes.py**: Full-text and embedding indexes
+1. **src/kv_store.py**: Core key-value store with WAL-based persistence
+2. **src/server.py**: HTTP server for single-node operation
+3. **src/client.py**: Client library for interacting with the store
+4. **src/replication.py**: Primary-secondary replication logic
+5. **src/replicated_server.py**: HTTP server with primary-secondary replication
+6. **src/masterless_replication.py**: Master-less replication with vector clocks
+7. **src/masterless_server.py**: HTTP server with master-less replication
+8. **src/indexes.py**: Full-text and embedding indexes
 
 ## Installation
 
@@ -42,46 +71,65 @@ cd NoSQL
 
 ### Single Node Server
 
+Option 1: Use the entry point script (recommended)
 ```bash
-python server.py [port] [debug]
+python run_server.py [port] [debug]
+```
+
+Option 2: Run directly from src
+```bash
+python src/server.py [port] [debug]
 ```
 
 Example:
 ```bash
-python server.py 8080 false
+python run_server.py 8080 false
 ```
 
 ### Primary-Secondary Replication (3 nodes)
 
-Start 3 nodes:
+Option 1: Use the helper script (recommended)
+```bash
+python scripts/run_cluster.py
+```
+
+Option 2: Start nodes manually
 ```bash
 # Node 1
-python replicated_server.py 1 9001 localhost:9002 localhost:9003
+python src/replicated_server.py 1 9001 localhost:9002 localhost:9003
 
 # Node 2
-python replicated_server.py 2 9002 localhost:9001 localhost:9003
+python src/replicated_server.py 2 9002 localhost:9001 localhost:9003
 
 # Node 3
-python replicated_server.py 3 9003 localhost:9001 localhost:9002
+python src/replicated_server.py 3 9003 localhost:9001 localhost:9002
 ```
 
 ### Master-less Replication (3 nodes)
 
-Start 3 nodes:
+Option 1: Use the helper script (recommended)
+```bash
+python scripts/run_cluster.py masterless
+```
+
+Option 2: Start nodes manually
 ```bash
 # Node 1
-python masterless_server.py 1 9101 localhost:9102 localhost:9103
+python src/masterless_server.py 1 9101 localhost:9102 localhost:9103
 
 # Node 2
-python masterless_server.py 2 9102 localhost:9101 localhost:9103
+python src/masterless_server.py 2 9102 localhost:9101 localhost:9103
 
 # Node 3
-python masterless_server.py 3 9103 localhost:9101 localhost:9102
+python src/masterless_server.py 3 9103 localhost:9101 localhost:9102
 ```
 
 ### Using the Client
 
 ```python
+import sys
+import os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
 from client import KVClient
 
 # Connect to server
@@ -106,8 +154,14 @@ client.bulk_set(items)
 
 ### Run Basic Tests
 
+Option 1: Use the entry point script (recommended)
 ```bash
-python tests.py
+python run_tests.py
+```
+
+Option 2: Run directly
+```bash
+python tests/tests.py
 ```
 
 Tests cover:
@@ -122,7 +176,7 @@ Tests cover:
 ### Run Replication Tests
 
 ```bash
-python test_replication.py
+python tests/test_replication.py
 ```
 
 Tests cover:
@@ -132,8 +186,14 @@ Tests cover:
 
 ### Run Benchmarks
 
+Option 1: Use the entry point script (recommended)
 ```bash
-python benchmarks.py
+python run_benchmarks.py
+```
+
+Option 2: Run directly
+```bash
+python benchmarks/benchmarks.py
 ```
 
 Benchmarks measure:
@@ -181,7 +241,7 @@ Set multiple key-value pairs.
 Enable debug mode to simulate file system synchronization issues (1% chance of failure):
 
 ```bash
-python server.py 8080 true
+python run_server.py 8080 true
 ```
 
 This helps test durability and recovery mechanisms.
@@ -211,7 +271,11 @@ Data is stored in:
 
 ### Full-Text Search
 ```python
-from indexes import IndexedKVStore, KeyValueStore
+import sys
+import os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
+from indexes import IndexedKVStore
+from kv_store import KeyValueStore
 
 kv_store = KeyValueStore()
 indexed_store = IndexedKVStore(kv_store)

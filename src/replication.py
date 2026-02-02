@@ -9,7 +9,7 @@ import time
 import urllib.request
 import urllib.parse
 from typing import Optional, Dict, List, Tuple
-from kv_store import KeyValueStore
+from .kv_store import KeyValueStore
 
 
 class ReplicationNode:

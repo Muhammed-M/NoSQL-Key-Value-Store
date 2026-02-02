@@ -1,6 +1,7 @@
 """
 Helper script to run a cluster of nodes.
 """
+import os
 import subprocess
 import sys
 import time
@@ -13,8 +14,10 @@ def run_replicated_cluster():
     processes = []
     try:
         # Start node 1
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        src_dir = os.path.join(script_dir, '..', 'src')
         p1 = subprocess.Popen(
-            ["python", "replicated_server.py", "1", "9001", "localhost:9002", "localhost:9003"],
+            ["python", os.path.join(src_dir, "replicated_server.py"), "1", "9001", "localhost:9002", "localhost:9003"],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE
         )
@@ -24,7 +27,7 @@ def run_replicated_cluster():
         
         # Start node 2
         p2 = subprocess.Popen(
-            ["python", "replicated_server.py", "2", "9002", "localhost:9001", "localhost:9003"],
+            ["python", os.path.join(src_dir, "replicated_server.py"), "2", "9002", "localhost:9001", "localhost:9003"],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE
         )
@@ -34,7 +37,7 @@ def run_replicated_cluster():
         
         # Start node 3
         p3 = subprocess.Popen(
-            ["python", "replicated_server.py", "3", "9003", "localhost:9001", "localhost:9002"],
+            ["python", os.path.join(src_dir, "replicated_server.py"), "3", "9003", "localhost:9001", "localhost:9002"],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE
         )
@@ -63,11 +66,14 @@ def run_masterless_cluster():
     """Run a 3-node master-less cluster."""
     print("Starting 3-node master-less cluster...")
     
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    src_dir = os.path.join(script_dir, '..', 'src')
+    
     processes = []
     try:
         # Start node 1
         p1 = subprocess.Popen(
-            ["python", "masterless_server.py", "1", "9101", "localhost:9102", "localhost:9103"],
+            ["python", os.path.join(src_dir, "masterless_server.py"), "1", "9101", "localhost:9102", "localhost:9103"],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE
         )
@@ -77,7 +83,7 @@ def run_masterless_cluster():
         
         # Start node 2
         p2 = subprocess.Popen(
-            ["python", "masterless_server.py", "2", "9102", "localhost:9101", "localhost:9103"],
+            ["python", os.path.join(src_dir, "masterless_server.py"), "2", "9102", "localhost:9101", "localhost:9103"],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE
         )
@@ -87,7 +93,7 @@ def run_masterless_cluster():
         
         # Start node 3
         p3 = subprocess.Popen(
-            ["python", "masterless_server.py", "3", "9103", "localhost:9101", "localhost:9102"],
+            ["python", os.path.join(src_dir, "masterless_server.py"), "3", "9103", "localhost:9101", "localhost:9102"],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE
         )

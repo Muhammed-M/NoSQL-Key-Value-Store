@@ -7,7 +7,7 @@ import threading
 import time
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from urllib.parse import urlparse, parse_qs
-from masterless_replication import MasterlessNode
+from .masterless_replication import MasterlessNode
 
 
 class MasterlessKVRequestHandler(BaseHTTPRequestHandler):

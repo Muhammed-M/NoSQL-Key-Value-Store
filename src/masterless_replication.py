@@ -10,7 +10,7 @@ import urllib.request
 import urllib.parse
 from typing import Optional, Dict, List, Tuple
 from collections import defaultdict
-from kv_store import KeyValueStore
+from .kv_store import KeyValueStore
 
 
 class VectorClock:

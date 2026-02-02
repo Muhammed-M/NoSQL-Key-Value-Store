@@ -3,11 +3,19 @@ Tests for replication functionality.
 Tests primary-secondary replication and leader election.
 """
 import os
+import sys
 import shutil
 import time
 import subprocess
 import signal
+
+# Add src to path
+src_path = os.path.join(os.path.dirname(__file__), '..', 'src')
+sys.path.insert(0, src_path)
 from client import KVClient
+
+# Get server script path
+REPLICATED_SERVER_SCRIPT = os.path.join(src_path, "replicated_server.py")
 
 
 def cleanup_data_dir(data_dir: str):
@@ -26,21 +34,21 @@ def test_replication_election():
     
     # Start 3 nodes
     node1 = subprocess.Popen(
-        ["python", "replicated_server.py", "1", "9001", "localhost:9002", "localhost:9003"],
+        ["python", REPLICATED_SERVER_SCRIPT, "1", "9001", "localhost:9002", "localhost:9003"],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE
     )
     time.sleep(0.5)
     
     node2 = subprocess.Popen(
-        ["python", "replicated_server.py", "2", "9002", "localhost:9001", "localhost:9003"],
+        ["python", REPLICATED_SERVER_SCRIPT, "2", "9002", "localhost:9001", "localhost:9003"],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE
     )
     time.sleep(0.5)
     
     node3 = subprocess.Popen(
-        ["python", "replicated_server.py", "3", "9003", "localhost:9001", "localhost:9002"],
+        ["python", REPLICATED_SERVER_SCRIPT, "3", "9003", "localhost:9001", "localhost:9002"],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE
     )
@@ -87,21 +95,21 @@ def test_primary_failure_election():
     
     # Start 3 nodes
     node1 = subprocess.Popen(
-        ["python", "replicated_server.py", "1", "9011", "localhost:9012", "localhost:9013"],
+        ["python", REPLICATED_SERVER_SCRIPT, "1", "9011", "localhost:9012", "localhost:9013"],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE
     )
     time.sleep(0.5)
     
     node2 = subprocess.Popen(
-        ["python", "replicated_server.py", "2", "9012", "localhost:9011", "localhost:9013"],
+        ["python", REPLICATED_SERVER_SCRIPT, "2", "9012", "localhost:9011", "localhost:9013"],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE
     )
     time.sleep(0.5)
     
     node3 = subprocess.Popen(
-        ["python", "replicated_server.py", "3", "9013", "localhost:9011", "localhost:9012"],
+        ["python", REPLICATED_SERVER_SCRIPT, "3", "9013", "localhost:9011", "localhost:9012"],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE
     )
@@ -186,21 +194,21 @@ def test_replication_data_sync():
     
     # Start 3 nodes
     node1 = subprocess.Popen(
-        ["python", "replicated_server.py", "1", "9021", "localhost:9022", "localhost:9023"],
+        ["python", REPLICATED_SERVER_SCRIPT, "1", "9021", "localhost:9022", "localhost:9023"],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE
     )
     time.sleep(0.5)
     
     node2 = subprocess.Popen(
-        ["python", "replicated_server.py", "2", "9022", "localhost:9021", "localhost:9023"],
+        ["python", REPLICATED_SERVER_SCRIPT, "2", "9022", "localhost:9021", "localhost:9023"],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE
     )
     time.sleep(0.5)
     
     node3 = subprocess.Popen(
-        ["python", "replicated_server.py", "3", "9023", "localhost:9021", "localhost:9022"],
+        ["python", REPLICATED_SERVER_SCRIPT, "3", "9023", "localhost:9021", "localhost:9022"],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE
     )

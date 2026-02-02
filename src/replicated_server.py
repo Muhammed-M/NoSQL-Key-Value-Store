@@ -7,7 +7,7 @@ import threading
 import time
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from urllib.parse import urlparse, parse_qs
-from kv_store import KeyValueStore
+from .kv_store import KeyValueStore
 
 
 class ReplicatedKVRequestHandler(BaseHTTPRequestHandler):
@@ -283,7 +283,7 @@ class ReplicatedKVServer:
         self.host = host
         self.port = port
         
-        from replication import ReplicationNode
+        from .replication import ReplicationNode
         self.replication_node = ReplicationNode(
             node_id=node_id,
             host=host,

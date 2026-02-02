@@ -3,13 +3,21 @@ Benchmarks for the Key-Value Store.
 Tests write throughput and durability.
 """
 import os
+import sys
 import shutil
 import time
 import threading
 import subprocess
 import signal
 import random
+
+# Add src to path
+src_path = os.path.join(os.path.dirname(__file__), '..', 'src')
+sys.path.insert(0, src_path)
 from client import KVClient
+
+# Get server script path
+SERVER_SCRIPT = os.path.join(src_path, "server.py")
 
 
 def cleanup_data_dir(data_dir: str):
@@ -29,8 +37,8 @@ def benchmark_write_throughput():
     for data_dir, pre_populate_size in zip(data_dirs, data_sizes):
         cleanup_data_dir(data_dir)
         
-        server_process = subprocess.Popen(
-            ["python", "server.py", "8090"],
+    server_process = subprocess.Popen(
+        ["python", SERVER_SCRIPT, "8090"],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE
         )
@@ -77,7 +85,7 @@ def benchmark_durability():
     cleanup_data_dir(data_dir)
     
     server_process = subprocess.Popen(
-        ["python", "server.py", "8091"],
+        ["python", SERVER_SCRIPT, "8091"],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE
     )
@@ -134,7 +142,7 @@ def benchmark_durability():
     # Restart server
     time.sleep(0.5)
     server_process = subprocess.Popen(
-        ["python", "server.py", "8091"],
+        ["python", SERVER_SCRIPT, "8091"],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE
     )

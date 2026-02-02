@@ -6,7 +6,7 @@ import json
 import threading
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from urllib.parse import urlparse, parse_qs
-from kv_store import KeyValueStore
+from .kv_store import KeyValueStore
 
 
 class KVRequestHandler(BaseHTTPRequestHandler):

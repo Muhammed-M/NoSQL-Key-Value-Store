@@ -3,13 +3,22 @@ Tests for the Key-Value Store.
 Tests common scenarios and ACID properties.
 """
 import os
+import sys
 import shutil
 import time
 import threading
 import subprocess
 import signal
 import random
+
+# Add src to path
+src_path = os.path.join(os.path.dirname(__file__), '..', 'src')
+sys.path.insert(0, src_path)
 from client import KVClient
+
+# Get server script path
+SERVER_SCRIPT = os.path.join(src_path, "server.py")
+REPLICATED_SERVER_SCRIPT = os.path.join(src_path, "replicated_server.py")
 
 
 def cleanup_data_dir(data_dir: str):
@@ -26,7 +35,7 @@ def test_set_then_get():
     
     # Start server
     server_process = subprocess.Popen(
-        ["python", "server.py", "8081"],
+        ["python", SERVER_SCRIPT, "8081"],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE
     )
@@ -56,7 +65,7 @@ def test_set_then_delete_then_get():
     cleanup_data_dir(data_dir)
     
     server_process = subprocess.Popen(
-        ["python", "server.py", "8082"],
+        ["python", SERVER_SCRIPT, "8082"],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE
     )
@@ -90,7 +99,7 @@ def test_get_without_setting():
     cleanup_data_dir(data_dir)
     
     server_process = subprocess.Popen(
-        ["python", "server.py", "8083"],
+        ["python", SERVER_SCRIPT, "8083"],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE
     )
@@ -117,7 +126,7 @@ def test_set_then_set_same_key_then_get():
     cleanup_data_dir(data_dir)
     
     server_process = subprocess.Popen(
-        ["python", "server.py", "8084"],
+        ["python", SERVER_SCRIPT, "8084"],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE
     )
@@ -150,7 +159,7 @@ def test_set_then_exit_gracefully_then_get():
     cleanup_data_dir(data_dir)
     
     server_process = subprocess.Popen(
-        ["python", "server.py", "8085"],
+        ["python", SERVER_SCRIPT, "8085"],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE
     )
@@ -168,7 +177,7 @@ def test_set_then_exit_gracefully_then_get():
         
         # Restart server
         server_process = subprocess.Popen(
-            ["python", "server.py", "8085"],
+            ["python", SERVER_SCRIPT, "8085"],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE
         )
@@ -193,7 +202,7 @@ def test_concurrent_bulk_set_same_keys():
     cleanup_data_dir(data_dir)
     
     server_process = subprocess.Popen(
-        ["python", "server.py", "8086"],
+        ["python", SERVER_SCRIPT, "8086"],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE
     )
@@ -251,7 +260,7 @@ def test_bulk_set_with_random_kill():
     cleanup_data_dir(data_dir)
     
     server_process = subprocess.Popen(
-        ["python", "server.py", "8087"],
+        ["python", SERVER_SCRIPT, "8087"],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE
     )
@@ -291,7 +300,7 @@ def test_bulk_set_with_random_kill():
         
         # Restart server
         server_process = subprocess.Popen(
-            ["python", "server.py", "8087"],
+            ["python", SERVER_SCRIPT, "8087"],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE
         )
